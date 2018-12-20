@@ -2,8 +2,11 @@
 a light plugin of vue， it simulates alert, confrim,model
 # 依赖于sass 切，不支持ie9 一下的版本
 demo:
+
 下载之后，在main.js中
+
 1，import vue$message from 'vue-message-simulate';
+
 2，Vue.use(vue$message);
 
 在页面中直接使用：
@@ -21,6 +24,8 @@ this.$message({
     },
     prohibitBgClick: true,
   });
+  
+  
   
   参数如下：
    /*
