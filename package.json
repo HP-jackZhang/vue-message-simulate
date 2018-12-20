@@ -1,0 +1,21 @@
+{
+  "name": "vue-message-simulate",
+  "version": "1.0.0",
+  "description": "a light plugin of vue ,it simulates alert ,confirm, model",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "vue",
+    "$message",
+    "alert",
+    "confirm",
+    "model"
+  ],
+  "author": "zhangwl",
+  "license": "ISC",
+  "dependencies": {
+    "vue": "^2.5.21"
+  }
+}
