@@ -24,9 +24,9 @@ this.$message({
     },
     prohibitBgClick: true,
   });
-  
-  
-  
+
+
+
   参数如下：
    /*
         * flag 是否执行动画
@@ -36,7 +36,7 @@ this.$message({
         * type 弹出框类型;默认alert, confirm, model
         * prohibitBgClick 弹出框类型为, confirm, model时，点击背景色是否关闭弹框
         * */
-          return {
+          {
             messageBox: {
               flag: false,
               desc: '',
@@ -54,3 +54,4 @@ this.$message({
             onConfirm: null,
             onCancel: null,
             prohibitBgClick: false,
+          }
