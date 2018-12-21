@@ -14,123 +14,126 @@
 
 <script>
     export default {
-      name: 'message',
-      data() {
-        /*
-        * flag 是否执行动画
-        * duration 动画执行时间
-        * closed 关闭动画的标识
-        * onClose 动画结束时的回调函数
-        * type 弹出框类型;默认alert, confirm, model
-        * prohibitBgClick 弹出框类型为, confirm, model时，点击背景色是否关闭弹框
-        * pauseAnimation 获取光标是否暂停动画（只在alert模式下处理）
-        * */
-          return {
-            messageBox: {
-              flag: false,
-              desc: '',
-              type: 'alert',
-              header: 'title',
-              showFooterbtns: true,
-              showFooterConfirm: true,
-              showFooterCancel: true,
-              boxStyleObject: null,
-              footerStyleObject: null,
-              contentStyleObject: null,
-            },
-            closed: false,
-            visible: false,
-            duration: 2000,
-            onClose: null,
-            onConfirm: null,
-            onCancel: null,
-            prohibitBgClick: false,
-          };
-      },
-      computed: {
-        messageBoxClass() {
-          return this.isAlert ? 'is-alert' : (this.isModel ? 'is-model' : 'is-model-close');
-        },
-        isAlert() {
-          return !this.messageBox.type || (this.messageBox.type === 'alert');
-        },
-        isModel() {
-          return !this.isAlert && this.messageBox.flag;
-        },
-      },
-      watch: {
-        closed(newVal) {
-          if (newVal) {
-            this.isAlert && this.$el.addEventListener('animationend', this.destroyElement);
-          }
-        },
-      },
-      mounted() {
-        /*
-     * 禁止滚动
-     * */
-        (document.body.style.overflow == 'hidden') || (document.body.style.overflow = 'hidden');
-        const env = (process.env.NODE_ENV !== 'production');
-        if (this.messageBox.type && this.messageBox.type !== 'alert' && this.messageBox.type !== 'confirm' && this.messageBox.type !== 'model') {
-          if (env) {
+        name: 'message',
+        data() {
             /*
-            * 中止动画
+            * flag 是否执行动画
+            * duration 动画执行时间
+            * closed 关闭动画的标识
+            * onClose 动画结束时的回调函数
+            * type 弹出框类型;默认alert, confirm, model
+            * prohibitBgClick 弹出框类型为, confirm, model时，点击背景色是否关闭弹框
+            * pauseAnimation 获取光标是否暂停动画（只在alert模式下处理）
             * */
-            this.messageBox.flag = false;
-            throw new Error('type property invalid');
-          }
-        } else {
-          /*
-        * 默认只有alert情况下进行动画，confirm 和 model 依赖于点击事件
-        * */
-          ((this.messageBox.type === 'alert') || !this.messageBox.type) && this.startTimer();
-        }
-      },
-      methods: {
-        destroyElement() {
-          (document.body.style.overflow == 'hidden') && (document.body.style.overflow = '')
-          this.$el.removeEventListener('animationend', this.destroyElement);
-          this.$destroy(true);
-          this.$el.parentNode.removeChild(this.$el);
+            return {
+                messageBox: {
+                    flag: false,
+                    desc: '',
+                    type: 'alert',
+                    header: 'title',
+                    showFooterbtns: true,
+                    showFooterConfirm: true,
+                    showFooterCancel: true,
+                    boxStyleObject: null,
+                    footerStyleObject: null,
+                    contentStyleObject: null,
+                },
+                closed: false,
+                visible: false,
+                duration: 2000,
+                onClose: null,
+                onConfirm: null,
+                onCancel: null,
+                prohibitBgClick: false,
+            };
         },
-        /*
-        * 开始计时,动画的时间要大于等于duration
-        * */
-        startTimer() {
-          if (this.duration > 0) {
-            this.timer = setTimeout(() => {
-              if (!this.closed) {
-                this.close();
-              }
-            }, this.duration);
-          }
+        computed: {
+            messageBoxClass() {
+                return this.isAlert ? 'is-alert' : (this.isModel ? 'is-model' : 'is-model-close');
+            },
+            isAlert() {
+                return !this.messageBox.type || (this.messageBox.type === 'alert');
+            },
+            isModel() {
+                return !this.isAlert && this.messageBox.flag;
+            },
         },
-        close() {
-          this.closed = true;
-          if (typeof this.onClose === 'function') {
-            this.onClose(this);
-          }
+        watch: {
+            closed(newVal) {
+                if (newVal) {
+                    this.isAlert && this.$el.addEventListener('animationend', this.destroyElement);
+                }
+            },
         },
-        /*
-        * footer 按钮处理
-        * */
-        handleFooter(flag, position) {
-          /*
-          * 非alert 模式下，判断点击背景色是否关闭弹框
-          * */
-          if (position && (position === 'bg') && !flag && this.prohibitBgClick) {
-            return;
-          }
-          this.messageBox.flag = false;
-          this.$el.addEventListener('animationend', this.destroyElement);
-          if (flag && (typeof this.onConfirm === 'function')) {
-            this.onConfirm(this);
-          }
-          if (!flag && (typeof this.onCancel === 'function')) {
-            this.onCancel(this);
-          }
+        mounted() {
+            /*
+         * 禁止滚动
+         * */
+            const env = (process.env.NODE_ENV !== 'production');
+            if (this.messageBox.type && this.messageBox.type !== 'alert' && this.messageBox.type !== 'confirm' && this.messageBox.type !== 'model') {
+                if (env) {
+                    /*
+                    * 中止动画
+                    * */
+                    this.messageBox.flag = false;
+                    throw new Error('type property invalid');
+                }
+            } else {
+                /*
+              * 默认只有alert情况下进行动画，confirm 和 model 依赖于点击事件,只有alert模式下 允许滚动
+              * */
+                if ((this.messageBox.type === 'alert') || !this.messageBox.type) {
+                    this.startTimer();
+                } else {
+                    (document.body.style.overflow == 'hidden') || (document.body.style.overflow = 'hidden');
+                }
+            }
         },
-      },
+        methods: {
+            destroyElement() {
+                (document.body.style.overflow == 'hidden') && (document.body.style.overflow = '')
+                this.$el.removeEventListener('animationend', this.destroyElement);
+                this.$destroy(true);
+                this.$el.parentNode.removeChild(this.$el);
+            },
+            /*
+            * 开始计时,动画的时间要大于等于duration
+            * */
+            startTimer() {
+                if (this.duration > 0) {
+                    this.timer = setTimeout(() => {
+                        if (!this.closed) {
+                            this.close();
+                        }
+                    }, this.duration);
+                }
+            },
+            close() {
+                this.closed = true;
+                if (typeof this.onClose === 'function') {
+                    this.onClose(this);
+                }
+            },
+            /*
+            * footer 按钮处理
+            * */
+            handleFooter(flag, position) {
+                /*
+                * 非alert 模式下，判断点击背景色是否关闭弹框
+                * */
+                if (position && (position === 'bg') && !flag && this.prohibitBgClick) {
+                    return;
+                }
+                this.messageBox.flag = false;
+                this.$el.addEventListener('animationend', this.destroyElement);
+                if (flag && (typeof this.onConfirm === 'function')) {
+                    this.onConfirm(this);
+                }
+                if (!flag && (typeof this.onCancel === 'function')) {
+                    this.onCancel(this);
+                }
+            },
+        },
     };
 </script>
 
